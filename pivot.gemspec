@@ -17,6 +17,6 @@ Gem::Specification.new do |gem|
 
   gem.add_development_dependency 'rake', '~> 0.9'
   gem.add_development_dependency 'rspec', '~> 2.10'
-  gem.add_dependency 'pivotal-tracker', '~> 0.5'
+  gem.add_dependency 'pivotal-tracker', '~> 0.5.6'
   gem.add_dependency 'commander', '~> 4.1'
 end
