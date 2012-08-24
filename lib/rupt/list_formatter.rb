@@ -1,4 +1,4 @@
-module Pivot
+module Rupt
   class ListFormatter
     attr_reader :hash
 

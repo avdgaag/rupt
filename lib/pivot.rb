@@ -1,7 +1,0 @@
-require 'pivot/version'
-require 'pivot/list_formatter'
-require 'pivot/config'
-require 'pivot/project'
-require 'pivot/story'
-require 'pivot/helpers'
-require 'pivot/colorizer'

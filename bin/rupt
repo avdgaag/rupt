@@ -1,15 +1,12 @@
-#!/usr/bin/env ruby
-
-$:.unshift File.expand_path('../../lib', __FILE__)
-require 'rubygems'
+#!/usr/bin/env ruby -rubygems
 require 'commander/import'
 require 'pivotal-tracker'
-require 'pivot'
+require 'rupt'
 
-include Pivot::Helpers
+include Rupt::Helpers
 HighLine.colorize_strings
 
-program :version, Pivot::VERSION
+program :version, Rupt::VERSION
 program :description, 'A command-line client for Pivotal Tracker'
 
 global_option '--token TOKEN', 'Use a specifc API token'
@@ -18,11 +15,11 @@ global_option '--project_id ID', 'Override which project to work with'
 default_command :current
 
 command :backlog do |c|
-  c.syntax      = 'pt backlog [options]'
+  c.syntax      = 'rupt backlog [options]'
   c.summary     = 'List all items'
   c.description = 'List all items across current iteration and backlog'
-  c.example 'List only bugs assigned to Arjan',        'pt current --bugs --owner Arjan'
-  c.example 'List only user stories labeled finance',  'pt current --stories --label finance'
+  c.example 'List only bugs assigned to Arjan',        'rupt current --bugs --owner Arjan'
+  c.example 'List only user stories labeled finance',  'rupt current --stories --label finance'
   c.option '-o', '--owner NAME',  String, 'Limit results by story owner'
   c.option '-t', '--type x,y,z',  Array,  'Limit results by type (bug, chore, story, release)'
   c.option '-l', '--label LABEL', String, 'Include only items labeled LABEL'
@@ -38,20 +35,20 @@ command :backlog do |c|
 end
 
 command :current do |c|
-  c.syntax      = 'pt current [options]'
+  c.syntax      = 'rupt current [options]'
   c.summary     = 'Describe the current iteration'
   c.description = 'Show a list of all items scheduled for the current iteration, along with their status and owner.'
-  c.example 'List all items in the current iteration', 'pt current'
+  c.example 'List all items in the current iteration', 'rupt current'
   c.action do |args, options|
     puts project(options).current_stories.map(&:summary)
   end
 end
 
 command :assign do |c|
-  c.syntax      = 'pt assign [ID] [options]'
+  c.syntax      = 'rupt assign [ID] [options]'
   c.summary     = 'Assign an item to someone.'
   c.description = 'Make a given person the new owner of the story with id ID'
-  c.example 'Assign story 12345 to John', 'pt assign 12345 --to John'
+  c.example 'Assign story 12345 to John', 'rupt assign 12345 --to John'
   c.option '-t', '--to NAME', String, 'Name of the person to make the new item owner'
   c.action do |args, options|
     project(options).story(args[0]).assign_to(options.to)
@@ -64,7 +61,7 @@ end
   accept: 'Accepted',
   reject: 'Rejected' }.each do |verb, state|
   command verb do |c|
-    c.syntax      = "pt #{verb} [ID]"
+    c.syntax      = "rupt #{verb} [ID]"
     c.summary     = "#{verb.to_s} the item with id ID"
     c.description = "Update an item's status to #{state}"
     c.option '-m', '--message [MSG]', String, 'Add a comment to the status change'
@@ -79,29 +76,29 @@ end
 end
 
 command :auth do |c|
-  c.syntax      = 'pt auth'
+  c.syntax      = 'rupt auth'
   c.summary     = 'Authenticate with Pivotal Tracker'
   c.description = 'Log in to Pivotal Tracker with your username and password, and store your API token in ~/.pivot'
   c.action do |args|
     email = ask('Username: ')
     pw    = password
-    Pivot::Config.set_token PivotalTracker::Client.token(email, pw)
+    Rupt::Config.set_token PivotalTracker::Client.token(email, pw)
   end
 end
 
 command :project do |c|
-  c.syntax      = 'pt project [ID]'
+  c.syntax      = 'rupt project [ID]'
   c.summary     = 'Set the current project ID'
   c.description = 'Store a given project ID in ./.pivot, or pick a project from a list'
-  c.example 'Show the current project ID', 'pt project'
-  c.example 'Set the current project ID to 12345', 'pt project 12345'
-  c.example 'Pick the current project from an interactive list', 'pt project -i'
+  c.example 'Show the current project ID', 'rupt project'
+  c.example 'Set the current project ID to 12345', 'rupt project 12345'
+  c.example 'Pick the current project from an interactive list', 'rupt project -i'
   c.option '-i', '--[no-]interactive', 'Pick a project from a list of all available projects in your account'
   c.action do |args, options|
     if args[0]
-      Pivot::Config.set_project args[0]
+      Rupt::Config.set_project args[0]
     elsif options.interactive
-      Pivot::Config.set_token choose_id(PivotalTracker::Project.all, :name)
+      Rupt::Config.set_token choose_id(PivotalTracker::Project.all, :name)
     else
       puts config.token
     end
@@ -109,10 +106,10 @@ command :project do |c|
 end
 
 command :branch do |c|
-  c.syntax      = 'pt branch [ID] [options]'
+  c.syntax      = 'rupt branch [ID] [options]'
   c.summary     = 'Create a new feature branch for this story'
   c.description = 'Start a new Git feature branch at the current revision using this story for its name'
-  c.example 'Create feature branch feature_12345_foo_bar', 'pt branch 12345'
+  c.example 'Create feature branch feature_12345_foo_bar', 'rupt branch 12345'
   c.option '-s', '--[no-]start', Boolean, 'Update story status to In Progress'
   c.action do |args, options|
     story = project(options).story(args[0])
@@ -122,21 +119,21 @@ command :branch do |c|
 end
 
 command :show do |c|
-  c.syntax      = 'pt current [options]'
+  c.syntax      = 'rupt current [options]'
   c.summary     = 'Describe an item'
   c.description = 'Prints all available attributes of an item in a single overview.'
-  c.example 'Show a complete description of an item with ID 633910', 'pt show 633910'
+  c.example 'Show a complete description of an item with ID 633910', 'rupt show 633910'
   c.action do |args, options|
     puts project(options).story(args[0]).to_list
   end
 end
 
 command :comments do |c|
-  c.syntax      = 'pt comments ID [options]'
+  c.syntax      = 'rupt comments ID [options]'
   c.summary     = 'Show an item\'s comments'
   c.description = 'List all the comments on an item with their respective authors and date'
-  c.example 'Show comments for item with ID 123456', 'pt comments 123456'
-  c.example 'Add "Hello, world" as a comment on item with ID 123456', 'pt comment 123456 -m "Hello, world"'
+  c.example 'Show comments for item with ID 123456', 'rupt comments 123456'
+  c.example 'Add "Hello, world" as a comment on item with ID 123456', 'rupt comment 123456 -m "Hello, world"'
   c.option '-a', '--add [MSG]', String, 'Comment text to add'
   c.action do |args, options|
     story = project(options).story(args[0])
@@ -149,18 +146,18 @@ command :comments do |c|
 end
 
 command :tasks do |c|
-  c.syntax      = 'pt tasks [options]'
+  c.syntax      = 'rupt tasks [options]'
   c.summary     = 'List an item\'s tasks'
   c.description = 'Display or manage tasks for an item'
   c.option '-a', '--add [MSG]',    String, 'Add MSG as a new task for the selected item'
   c.option '-r', '--remove [ID]',  Integer, 'Remove task with id ID from the selected item, or pick a task interactively'
   c.option '-c', '--check [ID]',   Integer, 'Mark task with id ID as done, or pick a task interactively'
   c.option '-u', '--uncheck [ID]', Integer, 'Mark task with id ID as not done, or pick a task interactively'
-  c.example 'List tasks for item with ID 12345',        'pt tasks 12345'
-  c.example 'Add a task to an item',                    'pt tasks 12345 --add "write documentation"'
-  c.example 'Remove the third task from an item',       'pt tasks 12345 --remove 3'
-  c.example 'Mark the second task of an item finished', 'pt tasks 12345 --check 2'
-  c.example 'Check off a task interactively',           'pt tasks 12345 -c'
+  c.example 'List tasks for item with ID 12345',        'rupt tasks 12345'
+  c.example 'Add a task to an item',                    'rupt tasks 12345 --add "write documentation"'
+  c.example 'Remove the third task from an item',       'rupt tasks 12345 --remove 3'
+  c.example 'Mark the second task of an item finished', 'rupt tasks 12345 --check 2'
+  c.example 'Check off a task interactively',           'rupt tasks 12345 -c'
   c.action do |args, options|
     story = project(options).story(args[0])
     if options.add

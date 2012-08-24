@@ -1,4 +1,4 @@
-module Pivot
+module Rupt
   class Project
     attr_reader :project
 

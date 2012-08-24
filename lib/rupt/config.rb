@@ -1,7 +1,7 @@
-module Pivot
+module Rupt
   class Config
-    USER_CONFIG_FILE    = '~/.pivot'
-    PROJECT_CONFIG_FILE = './.pivot'
+    USER_CONFIG_FILE    = File.expand_path('~/.rupt')
+    PROJECT_CONFIG_FILE = './.rupt'
 
     class << self
       def set_project(id)

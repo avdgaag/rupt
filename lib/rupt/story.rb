@@ -1,4 +1,4 @@
-module Pivot
+module Rupt
   class Story < SimpleDelegator
     def summary
       type  = Colorizer.type(story_type.rjust(9))

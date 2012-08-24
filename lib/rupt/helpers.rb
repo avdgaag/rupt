@@ -1,11 +1,11 @@
-module Pivot
+module Rupt
   module Helpers
     def config(options = nil)
-      @config ||= Pivot::Config.new(options.token, options.project_id)
+      @config ||= Rupt::Config.new(options.token, options.project_id)
     end
 
     def project(options)
-      @project ||= Pivot::Project.new(config(options))
+      @project ||= Rupt::Project.new(config(options))
     end
 
     def use_id_or_choose(id, options, label)

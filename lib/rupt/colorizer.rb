@@ -1,4 +1,4 @@
-module Pivot
+module Rupt
   module Colorizer
     def type(str)
       color = case str
