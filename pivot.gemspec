@@ -4,8 +4,12 @@ require File.expand_path('../lib/pivot/version', __FILE__)
 Gem::Specification.new do |gem|
   gem.authors       = ['Arjan van der Gaag']
   gem.email         = ['arjan@Kabisa.nl']
-  gem.description   = %q{TODO: Write a gem description}
-  gem.summary       = %q{TODO: Write a gem summary}
+  gem.description   = %q{A command line client for Pivotal Tracker}
+  gem.summary       = <<-EOS
+Pivot is command line interface for Pivotal Tracker projects, allowing you to
+browse through items, tasks and comments; progress or edit items; and integrate
+with your daily Git workflow.
+EOS
   gem.homepage      = ""
 
   gem.files         = `git ls-files`.split($\)
