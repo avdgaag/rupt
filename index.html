@@ -1,0 +1,209 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>Rupt by avdgaag</title>
+
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
+    <script src="javascripts/scale.fix.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+    <div class="wrapper">
+      <header>
+        <h1 class="header">Rupt</h1>
+        <p class="header">A command-line client for the Pivotal Tracker API</p>
+
+        <ul>
+          <li class="download"><a class="buttons" href="https://github.com/avdgaag/rupt/zipball/master">Download ZIP</a></li>
+          <li class="download"><a class="buttons" href="https://github.com/avdgaag/rupt/tarball/master">Download TAR</a></li>
+          <li><a class="buttons github" href="https://github.com/avdgaag/rupt">View On GitHub</a></li>
+        </ul>
+
+        <p class="header">This project is maintained by <a class="header name" href="https://github.com/avdgaag">avdgaag</a></p>
+
+
+      </header>
+      <section>
+        <h1>Rupt</h1>
+
+<p><strong>Note</strong> this is a prototype project to play around with creating a nice
+command-line interface. It works, but is still a little rough around the edges.</p>
+
+<p>Rupt is a command-line interface for <a href="http://www.pivotaltracker.com">Pivotal Tracker</a>. It allows
+developers to review stories, add comments and tasks, and update story progress
+right from the command line.</p>
+
+<p>Here's a quick example:</p>
+
+<pre><code># List all stories for the current iteration
+$ rupt current
+Feature 123456 3  Unstarted   As a user I want to publis blog posts
+# Mark the story as In progress
+$ rupt start 123456
+# Add a comment
+$ rupt comment 123456 --add "Great feature. Will be finished today."
+# Review open tasks for the story
+$ rupt tasks 123456
+- 34890 Add a the post model
+- 34891 Ask John for the design
+- 34892 Integrate with current feed
+# Mark the first task as done
+$ rupt tasks 12346 --check 34890
+</code></pre>
+
+<h2>Installation</h2>
+
+<p>Rupt is released as a Ruby Gem. Ruby and Rubygems should come pre-installed on
+most non-Windows systems. Install it like so:</p>
+
+<pre><code>$ gem install rupt
+</code></pre>
+
+<p>You can validate the installation process by running <code>rupt --version</code>. You should
+see something like <code>rupt 0.0.1</code>.</p>
+
+<h2>Usage</h2>
+
+<h3>Global options</h3>
+
+<p>Scope operations to a project:</p>
+
+<pre><code>$ rupt --project 12345
+</code></pre>
+
+<p>Scope operations to use a specific API token:</p>
+
+<pre><code>$ rupt --token 1a2b3c4e5f6g
+</code></pre>
+
+<h3>Authentication</h3>
+
+<p>Log in to Pivotal Tracker once to retrieve your API key:</p>
+
+<pre><code>$ rupt auth
+Email:
+Password:
+</code></pre>
+
+<p>This will store your personal token in ~/.rupt. You can override which token
+to use using the <code>--token</code> global option. Then, pick a project for your current
+project:</p>
+
+<pre><code>$ rupt project -i
+</code></pre>
+
+<p>This will let you pick one of your projects from Pivotal Tracker and store its
+ID in ./.rupt. You can override which project to use with the global
+<code>--project</code> option.</p>
+
+<h3>Listing backlog items</h3>
+
+<p>List all user stories in current iteration:</p>
+
+<pre><code>$ rupt current
+Feature 123456 3 Started    As a user I want to write a post (John)
+Choe    654321 8 Deliverded As as user I want to comment on a post (Frank)
+</code></pre>
+
+<p>List all bugs in the backlog owned by John:</p>
+
+<pre><code>$ rupt backlog --owner John --type bug
+</code></pre>
+
+<h3>Working with items</h3>
+
+<p>Re-assign item:</p>
+
+<pre><code>$ rupt assign 123456 --to GK
+</code></pre>
+
+<p>Change item status:</p>
+
+<pre><code>$ rupt [deliver|finish|accept|reject|start] 12345
+</code></pre>
+
+<p>Show a complete user story:</p>
+
+<pre><code>$ rupt show 123456
+Title:        As a user I want to publish a blog post
+Decription:   Fully description goes here
+Owner:        Arjan van der Gaag (AG)
+Requested by: Mieke Verhagen (MV)
+Estimate:     3
+Type:         story
+</code></pre>
+
+<h3>Working with comments and tasks</h3>
+
+<p>Comment on an item:</p>
+
+<pre><code>$ rupt comment 123456 -m "This is my new comment"
+</code></pre>
+
+<p>Show the latest comments in chronological order:</p>
+
+<pre><code>$ rupt comments 123456
+
+MV 2012-03-12 12:34 Dit is een eerste reactie
+MV 2012-03-12 12:34 Dit is een tweede reactie
+</code></pre>
+
+<p>Show a story's tasks:</p>
+
+<pre><code>$ rupt tasks 123456
+1 [done] Create a model
+2 [done] Write some tests
+3        Publish to staging
+</code></pre>
+
+<p>Mark a task as finished or unfinished:</p>
+
+<pre><code>$ rupt tasks 123456 --[un]check 1
+</code></pre>
+
+<h3>Extra</h3>
+
+<p>Create a new feature branch for a story based on its type, name and ID:</p>
+
+<pre><code>$ rupt branch 123456
+</code></pre>
+
+<p>Open a story in the browser client:</p>
+
+<pre><code>$ rupt open 123456
+</code></pre>
+
+<h2>Contributing</h2>
+
+<ol>
+<li>Fork it</li>
+<li>Create your feature branch (<code>git checkout -b my-new-feature</code>)</li>
+<li>Commit your changes (<code>git commit -am 'Added some feature'</code>)</li>
+<li>Push to the branch (<code>git push origin my-new-feature</code>)</li>
+<li>Create new Pull Request</li>
+</ol>
+      </section>
+      <footer>
+        <p><small>Hosted on <a href="https://pages.github.com">GitHub Pages</a> using the Dinky theme</small></p>
+      </footer>
+    </div>
+    <!--[if !IE]><script>fixScale(document);</script><![endif]-->
+		          <script type="text/javascript">
+            var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+            document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+          </script>
+          <script type="text/javascript">
+            try {
+              var pageTracker = _gat._getTracker("UA-20357800-1");
+            pageTracker._trackPageview();
+            } catch(err) {}
+          </script>
+
+  </body>
+</html>
