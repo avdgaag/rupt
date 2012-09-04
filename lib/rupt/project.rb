@@ -4,6 +4,7 @@ module Rupt
 
     def initialize(config)
       PivotalTracker::Client.token = config.api_token
+      puts config.project_id.inspect
       @project = PivotalTracker::Project.find(config.project_id)
     end
 
